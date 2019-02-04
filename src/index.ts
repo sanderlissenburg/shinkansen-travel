@@ -7,6 +7,8 @@ import {
     createStartTripCommandHandler
 } from "./services";
 import {TripStarted} from "./domain/trip-started";
+import {Card} from "./domain/card";
+import {Deserialize, Serialize} from "cerialize";
 
 
 const commandBus = createCommandBus();
@@ -24,3 +26,7 @@ const cardStore = createCardStore();
 
 console.log(cardStore.findById('abc123'));
 console.log(cardStore.findById('xyz123'));
+
+console.log(
+    Deserialize(Serialize(cardStore.findById('abc123')), Card)
+);

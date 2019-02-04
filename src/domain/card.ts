@@ -1,13 +1,22 @@
 import {TripStarted} from "./trip-started";
 import {DomainEvent} from "../application/event/domain-event";
+import {autoserializeAs} from 'cerialize';
+import {CurrentTrip} from "./vo/current-trip";
 
 export class Card {
 
-    constructor(
-        public readonly cardId: string,
-        private readonly currentTrip: {startStationId: string, startedAt: Date}|null = null
-    ) {
+    @autoserializeAs('card_id')
+    public readonly cardId: string;
 
+    @autoserializeAs(CurrentTrip, 'current_trip')
+    private readonly currentTrip: CurrentTrip|null;
+    
+    constructor(
+        cardId: string,
+        currentTrip: CurrentTrip|null = null
+    ) {
+        this.cardId = cardId;
+        this.currentTrip = currentTrip;
     }
 
     public * startTrip (stationId: string): IterableIterator<DomainEvent>
@@ -29,10 +38,10 @@ export class Card {
     public whenTripStarted(event: TripStarted) {
         return new Card(
             this.cardId,
-            {
-                startStationId: event.stationId,
-                startedAt: event.startedAt
-            }
+            new CurrentTrip(
+                event.stationId,
+                event.startedAt
+            )
         );
     }
 }
