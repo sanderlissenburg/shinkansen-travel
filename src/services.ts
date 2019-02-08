@@ -4,6 +4,7 @@ import {StartTripCommandHander} from "./domain/start-trip-command-handler";
 import {CommandBus} from "./application/command/command-bus";
 import {DomainEventBus} from "./application/event/domain-event-bus";
 import {CardEventListener} from "./domain/card-event-listener";
+import {EndTripCommandHandler} from "./domain/end-trip-command-handler";
 
 let cardStore: CardStore;
 export function createCardStore(): CardStore
@@ -26,7 +27,20 @@ export function createStartTripCommandHandler(): StartTripCommandHander
         createCardStore(),
         createDomainEventBus()
     );
-};
+}
+
+let endTripCommandHandler: EndTripCommandHandler;
+export function createEndTripCommandHandler(): EndTripCommandHandler
+{
+    if (endTripCommandHandler) {
+        return endTripCommandHandler;
+    }
+
+    return endTripCommandHandler = new EndTripCommandHandler(
+        createCardStore(),
+        createDomainEventBus()
+    );
+}
 
 let commandBus;
 export function createCommandBus(): CommandBus

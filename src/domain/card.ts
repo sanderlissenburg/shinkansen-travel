@@ -2,6 +2,7 @@ import {TripStarted} from "./trip-started";
 import {DomainEvent} from "../application/event/domain-event";
 import {autoserializeAs} from 'cerialize';
 import {CurrentTrip} from "./vo/current-trip";
+import {TripEnded} from "./trip-ended";
 
 export class Card {
 
@@ -35,6 +36,15 @@ export class Card {
         yield new TripStarted(this.cardId, stationId, startedAt);
     }
 
+    public * endTrip(stationId: string, endedAt: Date)
+    {
+        // if (stationId == this.currentTrip.startStationId && 'now - 10 min' <= 'start date current trip') {
+        //     yield new TripCanceled(this.cardId, endedAt);
+        // }
+
+        yield new TripEnded(this.cardId, stationId, endedAt)
+    }
+
     public whenTripStarted(event: TripStarted) {
         return new Card(
             this.cardId,
@@ -43,5 +53,12 @@ export class Card {
                 event.startedAt
             )
         );
+    }
+
+    public whenTripEnded(event: TripEnded) {
+        return new Card(
+            this.cardId,
+            null
+        )
     }
 }

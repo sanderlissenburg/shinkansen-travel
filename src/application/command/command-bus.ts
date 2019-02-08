@@ -13,6 +13,8 @@ export class CommandBus {
     {
         if(command.constructor.name in this.handlers) {
             this.handlers[command.constructor.name].handle(command);
+        } else {
+            console.log(`Warning: No Command handler for ${command.constructor.name}`);
         }
     }
 }

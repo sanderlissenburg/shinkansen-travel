@@ -1,10 +1,10 @@
 import {CommandHandler} from "../application/command/command-handler";
+import {EndTrip} from "./end-trip";
 import {CardStore} from "../application/store/card-store";
-import {StartTrip} from "./start-trip";
-import {Card} from "./card";
 import {DomainEventBus} from "../application/event/domain-event-bus";
+import {Card} from "./card";
 
-export class StartTripCommandHander implements CommandHandler {
+export class EndTripCommandHandler implements CommandHandler {
 
     constructor(
         private readonly store: CardStore,
@@ -12,7 +12,7 @@ export class StartTripCommandHander implements CommandHandler {
     ) {
     }
 
-    handle(command: StartTrip): void {
+    handle(command: EndTrip): void {
 
         let card = this.store.findById(command.cardId);
 
@@ -20,7 +20,7 @@ export class StartTripCommandHander implements CommandHandler {
             card = new Card(command.cardId);
         }
 
-        for (let event of card.startTrip(command.stationId, new Date())) {
+        for (let event of card.endTrip(command.stationId, new Date())) {
             this.domainEventBus.emit(event);
         }
     }
