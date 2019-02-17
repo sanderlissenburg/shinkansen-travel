@@ -11,6 +11,7 @@ import {Card} from "./domain/card";
 import {EndTrip} from "./domain/end-trip";
 import {Deserialize, Serialize} from "cerialize";
 import {TripEnded} from "./domain/trip-ended";
+import {DateTime} from "luxon";
 
 const commandBus = createCommandBus();
 const domainEventBus = createDomainEventBus();

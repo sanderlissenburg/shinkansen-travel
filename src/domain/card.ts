@@ -4,6 +4,8 @@ import {autoserializeAs} from 'cerialize';
 import {CurrentTrip} from "./vo/current-trip";
 import {TripEnded} from "./trip-ended";
 import {TripEndedWithoutCheckout} from "./trip-ended-without-checkout";
+import {DateTime} from "luxon";
+import {TripCanceled} from "./trip-canceled";
 
 export class Card {
 
@@ -39,9 +41,16 @@ export class Card {
 
     public * endTrip(stationId: string, endedAt: Date)
     {
-        // if (stationId == this.currentTrip.startStationId && 'now - 10 min' <= 'start date current trip') {
-        //     yield new TripCanceled(this.cardId, endedAt);
-        // }
+        if (!this.currentTrip) {
+            throw new Error('No trip in progress');
+        }
+
+        let toCheck = DateTime.fromJSDate(endedAt).minus({minutes: 10}).toJSDate();
+
+        if (stationId == this.currentTrip.startStationId && toCheck < this.currentTrip.startedAt) {
+            yield new TripCanceled(this.cardId, endedAt);
+            return;
+        }
 
         yield new TripEnded(this.cardId, stationId, endedAt)
     }

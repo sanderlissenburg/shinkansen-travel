@@ -5,6 +5,8 @@ import {CurrentTrip} from "../../src/domain/vo/current-trip";
 import {TripEnded} from "../../src/domain/trip-ended";
 import {expect} from "chai";
 import {TripEndedWithoutCheckout} from "../../src/domain/trip-ended-without-checkout";
+import {DateTime} from "luxon";
+import {TripCanceled} from "../../src/domain/trip-canceled";
 
 const date = new Date();
 
@@ -33,7 +35,7 @@ describe('Card', () => {
             )).to.throw(Error, 'Trip already started from this station')
         });
 
-        it('should return both a TripStarted and a TripEndedWithoutCheckout event when a current trip is in progress', expectedDomainEvents(
+        it('should return both a TripEndedWithoutCheckout and a TripStarted event when there is already a trip in progress', expectedDomainEvents(
             new Card(
                 'a-card-id',
                 new CurrentTrip('a-station-id', date)
@@ -49,21 +51,56 @@ describe('Card', () => {
     });
 
     describe('End Trip', () => {
-        it('should return a TripEnded event when a trip has been started', expectedDomainEvents(
-            new Card('a-card-id', new CurrentTrip(
-                'a-station-id',
-                date
-            )).endTrip(
+        it('should return a TripEnded event when a trip has been started 10 minutes or more ago.', expectedDomainEvents(
+            new Card(
+                'a-card-id',
+                new CurrentTrip(
                     'a-station-id',
                     date
-                ),
+                )
+            ).endTrip(
+                'a-station-id',
+                DateTime.fromJSDate(date).plus({minutes: 10}).toJSDate()
+            ),
             [
                 new TripEnded(
                     'a-card-id',
                     'a-station-id',
+                    DateTime.fromJSDate(date).plus({minutes: 10}).toJSDate()
+                )
+            ]
+        ));
+
+        it('should return a TripCanceled event when a trip is ended on the start station in less then 10 minutes of checking in.', expectedDomainEvents(
+            new Card(
+                'a-card-id',
+                new CurrentTrip(
+                    'a-station-id',
+                    date
+                )
+            ).endTrip(
+                'a-station-id',
+                date
+            ),
+            [
+                new TripCanceled(
+                    'a-card-id',
                     date
                 )
             ]
         ));
+
+        it('should throw an Exception when no trip is in progress', () => {
+            expect(expectedDomainEvents(
+                new Card(
+                    'a-card-id',
+                   null
+                ).endTrip(
+                    'a-station-id',
+                    date
+                ),
+                []
+            )).to.throw(Error, 'No trip in progress')
+        });
     })
 });
