@@ -8,14 +8,13 @@
   "private": false,
   "scripts": {
     "watch": "nodemon -L --watch 'src' --ext 'ts' --exec 'ts-node' src/index.ts",
-    "start": "ts-node src/index.ts",
     "build": "tsc --build",
-    "prod": "node build/index.js",
+    "prod": "node build/src/index.js",
     "test": "mocha -r ts-node/register 'tests/**/*.test.ts'"
   },
   "dependencies": {
     "@types/express": "^4.16.1",
-    "@types/luxon": "^1.11.0",
+    "@types/luxon": "^1.11.1",
     "cerialize": "^0.1.18",
     "express": "^4.16.4",
     "luxon": "^1.11.2"

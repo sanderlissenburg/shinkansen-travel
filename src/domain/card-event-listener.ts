@@ -4,6 +4,8 @@ import {DomainEvent} from "../application/event/domain-event";
 import {TripStarted} from "./trip-started";
 import {Card} from "./card";
 import {TripEnded} from "./trip-ended";
+import {TripCanceled} from "./trip-canceled";
+import {TripEndedWithoutCheckout} from "./trip-ended-without-checkout";
 
 export class CardEventListener implements DomainEventListener {
     constructor(private readonly cardStore: CardStore) {
@@ -33,6 +35,30 @@ export class CardEventListener implements DomainEventListener {
         }
 
         card = card.whenTripEnded(event);
+
+        this.cardStore.save(card);
+    }
+
+    handleTripCanceled(event: TripCanceled) {
+        let card = this.cardStore.findById(event.cardId);
+
+        if (!card) {
+            card = new Card(event.cardId);
+        }
+
+        card = card.whenTripCanceled(event);
+
+        this.cardStore.save(card);
+    }
+
+    handleTripEndedWithoutCheckout(event: TripEndedWithoutCheckout) {
+        let card = this.cardStore.findById(event.cardId);
+
+        if (!card) {
+            card = new Card(event.cardId);
+        }
+
+        card = card.whenTripEndedWithoutCheckout(event);
 
         this.cardStore.save(card);
     }

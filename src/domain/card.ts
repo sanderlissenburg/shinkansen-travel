@@ -39,7 +39,7 @@ export class Card {
         yield new TripStarted(this.cardId, stationId, startedAt);
     }
 
-    public * endTrip(stationId: string, endedAt: Date)
+    public * endTrip(stationId: string, endedAt: Date): IterableIterator<DomainEvent>
     {
         if (!this.currentTrip) {
             throw new Error('No trip in progress');
@@ -55,7 +55,8 @@ export class Card {
         yield new TripEnded(this.cardId, stationId, endedAt)
     }
 
-    public whenTripStarted(event: TripStarted) {
+    public whenTripStarted(event: TripStarted): Card
+    {
         return new Card(
             this.cardId,
             new CurrentTrip(
@@ -65,7 +66,26 @@ export class Card {
         );
     }
 
-    public whenTripEnded(event: TripEnded) {
+    public whenTripEnded(event: TripEnded): Card
+    {
+        return new Card(
+            this.cardId,
+            null
+        )
+    }
+
+    public whenTripCanceled(event: TripCanceled): Card
+    {
+        console.log('Canceled');
+
+        return new Card(
+            this.cardId,
+            null
+        )
+    }
+
+    public whenTripEndedWithoutCheckout(event: TripEndedWithoutCheckout): Card
+    {
         return new Card(
             this.cardId,
             null

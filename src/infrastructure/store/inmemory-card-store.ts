@@ -14,5 +14,7 @@ export class InMemmoryCardStore implements CardStore {
 
     save(card: Card): void {
         this.cards[card.cardId] = card;
+        console.log('saved');
+        console.log(this.cards);
     }
 }

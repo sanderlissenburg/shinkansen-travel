@@ -11,8 +11,14 @@ services:
   nodejs-watch:
     <<: *nodejs
     ports:
-      - "80:80"
+      - "80:3000"
     command: yarn run watch
+
+  nodejs-http:
+    <<: *nodejs
+    ports:
+      - "80:3000"
+    command: yarn run prod
 
   nodejs:
     <<: *nodejs
