@@ -12,9 +12,9 @@ export class StartTripCommandHander implements CommandHandler {
     ) {
     }
 
-    handle(command: StartTrip): void {
+    async handle(command: StartTrip) {
 
-        let card = this.store.findById(command.cardId);
+        let card = await this.store.findById(command.cardId);
 
         if (!card) {
             card = new Card(command.cardId);

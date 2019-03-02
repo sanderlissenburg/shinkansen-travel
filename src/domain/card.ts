@@ -76,8 +76,6 @@ export class Card {
 
     public whenTripCanceled(event: TripCanceled): Card
     {
-        console.log('Canceled');
-
         return new Card(
             this.cardId,
             null

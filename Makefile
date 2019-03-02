@@ -5,7 +5,7 @@ help: ## Shows this help message.
 	@egrep '^(.+)\:\ ##\ (.+)' ${MAKEFILE_LIST} | column -t -c 2 -s ':#'
 
 watch:
-	docker-compose run --rm nodejs-watch
+	docker-compose run --rm --service-ports nodejs-watch
 .PHONY: watch
 
 test:

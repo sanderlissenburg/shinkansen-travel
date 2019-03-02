@@ -2,7 +2,7 @@ import {StartTrip} from "./domain/start-trip";
 import {
     createCardEventListener,
     createCommandBus,
-    createDomainEventBus, createEndTripCommandHandler,
+    createDomainEventBus, createEndTripCommandHandler, createMongoClient,
     createStartTripCommandHandler
 } from "./services";
 import {TripStarted} from "./domain/trip-started";
@@ -12,46 +12,52 @@ import express = require("express");
 import {TripCanceled} from "./domain/trip-canceled";
 import {TripEndedWithoutCheckout} from "./domain/trip-ended-without-checkout";
 
-const port: number = 3000;
-const app = express();
+const main = async () => {
 
-const commandBus = createCommandBus();
-const domainEventBus = createDomainEventBus();
+    await createMongoClient();
 
-domainEventBus.register(TripStarted.name, createCardEventListener());
-domainEventBus.register(TripEnded.name, createCardEventListener());
-domainEventBus.register(TripCanceled.name, createCardEventListener());
-domainEventBus.register(TripEndedWithoutCheckout.name, createCardEventListener());
+    const port: number = 3000;
+    const app = express();
 
-commandBus.register(StartTrip.name, createStartTripCommandHandler());
-commandBus.register(EndTrip.name, createEndTripCommandHandler());
+    const commandBus = createCommandBus();
+    const domainEventBus = createDomainEventBus();
 
-app.get('/start-trip/:cardId/:stationId/', (req, res) => {
+    domainEventBus.register(TripStarted.name, await createCardEventListener());
+    domainEventBus.register(TripEnded.name, await createCardEventListener());
+    domainEventBus.register(TripCanceled.name, await createCardEventListener());
+    domainEventBus.register(TripEndedWithoutCheckout.name, await createCardEventListener());
 
-    try {
-        commandBus.handle(new StartTrip(req.params.cardId, req.params.stationId));
-    } catch (e) {
-        res.status(409).send(e.message);
-        return;
-    }
+    commandBus.register(StartTrip.name, await createStartTripCommandHandler());
+    commandBus.register(EndTrip.name, await createEndTripCommandHandler());
 
+    app.get('/start-trip/:cardId/:stationId/', async (req, res) => {
 
-    res.send(`Trip started for ${req.params.cardId} at station ${req.params.stationId}`);
-});
+        try {
+            await commandBus.handle(new StartTrip(req.params.cardId, req.params.stationId));
+        } catch (e) {
+            res.status(409).send(e.message);
+            return;
+        }
 
-app.get('/end-trip/:cardId/:stationId/', (req, res) => {
+        res.send(`Trip started for ${req.params.cardId} at station ${req.params.stationId}`);
+    });
 
-    try {
-        commandBus.handle(new EndTrip(req.params.cardId, req.params.stationId));
-    } catch (e) {
-        res.status(409).send(e.message);
-        return;
-    }
+    app.get('/end-trip/:cardId/:stationId/', async (req, res) => {
 
-    res.send(`Trip ended for ${req.params.cardId} at station ${req.params.stationId}`);
-});
+        try {
+            await commandBus.handle(new EndTrip(req.params.cardId, req.params.stationId));
+        } catch (e) {
+            res.status(409).send(e.message);
+            return;
+        }
 
+        res.send(`Trip ended for ${req.params.cardId} at station ${req.params.stationId}`);
+    });
 
-app.listen(port, () => {
-    console.log(`Shinkansen travel is listening on ${port}`);
-});
+    app.listen(port, () => {
+        console.log(`Shinkansen travel is listening on ${port}`);
+    });
+};
+
+main();
+

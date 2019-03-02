@@ -15,51 +15,46 @@ export class CardEventListener implements DomainEventListener {
         this['handle' + event.constructor.name](event);
     };
 
-    handleTripStarted(event: TripStarted) {
-        let card = this.cardStore.findById(event.cardId);
-
-        if (!card) {
-            card = new Card(event.cardId);
-        }
+    async handleTripStarted(event: TripStarted) {
+        let card:Card = await this.getCardById(event.cardId);
 
         card = card.whenTripStarted(event);
 
         this.cardStore.save(card);
     }
 
-    handleTripEnded(event: TripEnded) {
-        let card = this.cardStore.findById(event.cardId);
-
-        if (!card) {
-            card = new Card(event.cardId);
-        }
+    async handleTripEnded(event: TripEnded) {
+        let card:Card = await this.getCardById(event.cardId);
 
         card = card.whenTripEnded(event);
 
         this.cardStore.save(card);
     }
 
-    handleTripCanceled(event: TripCanceled) {
-        let card = this.cardStore.findById(event.cardId);
-
-        if (!card) {
-            card = new Card(event.cardId);
-        }
+    async handleTripCanceled(event: TripCanceled) {
+        let card:Card = await this.getCardById(event.cardId);
 
         card = card.whenTripCanceled(event);
 
         this.cardStore.save(card);
     }
 
-    handleTripEndedWithoutCheckout(event: TripEndedWithoutCheckout) {
-        let card = this.cardStore.findById(event.cardId);
-
-        if (!card) {
-            card = new Card(event.cardId);
-        }
+    async handleTripEndedWithoutCheckout(event: TripEndedWithoutCheckout) {
+        let card:Card = await this.getCardById(event.cardId);
 
         card = card.whenTripEndedWithoutCheckout(event);
 
         this.cardStore.save(card);
+    }
+
+    private async getCardById(id: string): Promise<Card>
+    {
+        let card = await this.cardStore.findById(id);
+
+        if (!card) {
+            card = new Card(id);
+        }
+
+        return card;
     }
 }

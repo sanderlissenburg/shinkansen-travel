@@ -9,10 +9,10 @@ export class CommandBus {
         this.handlers[handles] = commandHandler;
     }
 
-    handle(command: Command): void
+    async handle(command: Command)
     {
         if(command.constructor.name in this.handlers) {
-            this.handlers[command.constructor.name].handle(command);
+            await this.handlers[command.constructor.name].handle(command);
         } else {
             console.log(`Warning: No Command handler for ${command.constructor.name}`);
         }

@@ -4,7 +4,7 @@ import {CardStore} from "../../application/store/card-store";
 export class InMemmoryCardStore implements CardStore {
     private cards: {[id: string]: Card } = {};
 
-    public findById(id: string): Card|null {
+    async findById(id: string): Promise<Card|null> {
         if (id in this.cards) {
             return this.cards[id];
         }
@@ -14,7 +14,5 @@ export class InMemmoryCardStore implements CardStore {
 
     save(card: Card): void {
         this.cards[card.cardId] = card;
-        console.log('saved');
-        console.log(this.cards);
     }
 }
