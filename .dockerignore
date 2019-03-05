@@ -1,0 +1,8 @@
+.idea
+.git
+node_modules
+yarn-error.log
+Dockerfile
+docker-compose.yaml
+build
+Makefile
