@@ -8,6 +8,9 @@ help: ## Shows this help message.
 	@echo 'targets:'
 	@egrep '^(.+)\:\ ##\ (.+)' ${MAKEFILE_LIST} | column -t -c 2 -s ':#'
 
+install:
+	docker-compose run --rm nodejs yarn install
+
 watch:
 	docker-compose up -d mongo mongo-express
 	docker-compose run --rm --service-ports nodejs-watch
