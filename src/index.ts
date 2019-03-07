@@ -13,9 +13,6 @@ import {TripCanceled} from "./domain/trip-canceled";
 import {TripEndedWithoutCheckout} from "./domain/trip-ended-without-checkout";
 
 const main = async () => {
-
-    await createMongoClient();
-
     const port: number = 3000;
     const app = express();
 
@@ -52,6 +49,10 @@ const main = async () => {
         }
 
         res.send(`Trip ended for ${req.params.cardId} at station ${req.params.stationId}`);
+    });
+
+    app.get('/foobar', (req, res) => {
+       res.send('foobar to you!');
     });
 
     app.listen(port, () => {
