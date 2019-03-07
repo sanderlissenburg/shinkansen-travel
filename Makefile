@@ -18,11 +18,7 @@ watch:
 
 up:
 	docker-compose run --rm nodejs yarn run build
-	docker-compose up -d mongo mongo-express
-	## TEMP FIX TO PREVENT unavailable mongodb
-	sleep 5
-	##
-	docker-compose up -d nodejs-http
+	docker-compose up -d mongo nodejs-http
 .PHONY: up
 
 down:
@@ -34,7 +30,7 @@ test:
 .PHONY: test
 
 build-image:
-	docker build -f docker/node-http/Dockerfile -t lissenburg/shinkansen-travel-node-http  .
+	docker build -f docker/node-http/Dockerfile -t lissenburg/shinkansen-travel-node-http:latest .
 .PHONY: build-image
 
 build-dev-image:
@@ -43,6 +39,12 @@ build-dev-image:
 
 push-image:
 	docker login -u '$(DOCKER_USER)' -p '$(DOCKER_PASSWORD)'
-	docker push lissenburg/shinkansen-travel-node-http
+	docker push lissenburg/shinkansen-travel-node-http:latest
 	docker logout
 .PHONY: push-image
+
+deploy:
+	ssh $(SSH_USER)@$(SSH_HOST) 'mkdir -p ~/www/shinkansen-travel/'
+	scp -r deploy/vps/* $(SSH_USER)@$(SSH_HOST):~/www/shinkansen-travel/
+	ssh $(SSH_USER)@$(SSH_HOST) 'cd www/shinkansen-travel/ && sudo docker-compose pull && sudo docker-compose up -d'
+.PHONY: deploy

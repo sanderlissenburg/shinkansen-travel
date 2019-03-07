@@ -6,7 +6,11 @@
       "sourceMap": true,
       "strictNullChecks": true,
       "experimentalDecorators": true,
-      "emitDecoratorMetadata": true
+      "emitDecoratorMetadata": true,
+      "types": [
+        "node",
+        "mocha"
+      ]
     },
     "include": [
       "./src/**/*.ts"

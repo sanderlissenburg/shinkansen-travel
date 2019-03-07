@@ -8,6 +8,11 @@ import {EndTripCommandHandler} from "./domain/end-trip-command-handler";
 import {MongoClient} from "mongodb";
 import {MongodbCardStore} from "./infrastructure/store/mongodb-card-store";
 
+const params = {
+    mongodb_username: process.env.MONGO_INITDB_ROOT_USERNAME || 'root',
+    mongodb_password: process.env.MONGO_INITDB_ROOT_PASSWORD || 'example'
+};
+
 let inMemmoryCardStore: InMemmoryCardStore;
 export function createInMemmoryCardStore(): InMemmoryCardStore
 {
@@ -98,7 +103,7 @@ export async function createMongoClient(): Promise<MongoClient> {
         return mongoClient;
     }
 
-    mongoClient = new MongoClient('mongodb://root:example@mongo:27017',{ useNewUrlParser: true } );
+    mongoClient = new MongoClient(`mongodb://${params.mongodb_username}:${params.mongodb_password}@mongo:27017`,{ useNewUrlParser: true } );
 
     await new Promise((resolve, reject) => {
         mongoClient.connect((error, client) => {
