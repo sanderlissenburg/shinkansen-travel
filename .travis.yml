@@ -12,7 +12,7 @@ branches:
     - development
 
 stages:
-  - test
+  - name: test
   - name: build-deploy
     if: branch = master
 
@@ -32,3 +32,4 @@ jobs:
       script:
         - make build-image
         - make push-image
+        - make deploy
