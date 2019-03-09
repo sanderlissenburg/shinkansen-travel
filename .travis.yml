@@ -17,6 +17,11 @@ stages:
     if: branch = master
 
 before_install:
+  - openssl aes-256-cbc -K $encrypted_bf9db7fc2d2b_key -iv $encrypted_bf9db7fc2d2b_iv
+    -in ./travis/deploy_key.enc -out ./deploy_key -d
+  - eval "$(ssh-agent)"
+  - chmod 600 ./deploy_key
+  - ssh-add ./deploy_key
   - sudo rm /usr/local/bin/docker-compose
   - curl -L https://github.com/docker/compose/releases/download/${DOCKER_COMPOSE_VERSION}/docker-compose-`uname -s`-`uname -m` > docker-compose
   - chmod +x docker-compose
