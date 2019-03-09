@@ -44,7 +44,7 @@ push-image:
 .PHONY: push-image
 
 deploy:
-	ssh $(SSH_USER)@$(SSH_HOST) 'mkdir -p ~/www/shinkansen-travel/'
+	ssh $(SSH_USER)@$(SSH_HOST) 'mkdir -p ~/www/shinkansen-travel/' -y
 	scp -r deploy/vps/* $(SSH_USER)@$(SSH_HOST):~/www/shinkansen-travel/
 	ssh $(SSH_USER)@$(SSH_HOST) 'cd www/shinkansen-travel/ && sudo docker-compose pull && sudo docker-compose up -d'
 .PHONY: deploy

@@ -14,7 +14,7 @@ branches:
 stages:
   - name: test
   - name: build-deploy
-    if: branch = master
+    if: branch = master AND type = push
 
 before_install:
   - openssl aes-256-cbc -K $encrypted_bf9db7fc2d2b_key -iv $encrypted_bf9db7fc2d2b_iv
