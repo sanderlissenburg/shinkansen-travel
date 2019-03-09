@@ -21,6 +21,7 @@ before_install:
     -in ./travis/deploy_key.enc -out ./deploy_key -d
   - eval "$(ssh-agent)"
   - chmod 600 ./deploy_key
+  - echo -e "Host $SSH_HOST\n\tStrictHostKeyChecking no\n" >> ~/.ssh/config
   - ssh-add ./deploy_key
   - sudo rm /usr/local/bin/docker-compose
   - curl -L https://github.com/docker/compose/releases/download/${DOCKER_COMPOSE_VERSION}/docker-compose-`uname -s`-`uname -m` > docker-compose
