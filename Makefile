@@ -2,7 +2,7 @@ ifneq ("$(wildcard ./.env)","")
 	include .env
 endif
 
-docker_password = $(shell echo $(DOCKER_PASSWORD)| base64 -D)
+DOCKER_PASSWORD_DECODED = $(shell echo $(DOCKER_PASSWORD)| base64 -D)
 
 help: ## Shows this help message.
 	@echo 'usage: make [target] ...'
@@ -12,6 +12,7 @@ help: ## Shows this help message.
 
 install:
 	docker-compose run --rm nodejs yarn install
+.PHONY: install
 
 watch:
 	docker-compose up -d mongo mongo-express
@@ -41,7 +42,7 @@ build-dev-image:
 
 push-image:
 
-	docker login -u '$(DOCKER_USER)' -p '${docker_password}'
+	docker login -u '$(DOCKER_USER)' -p '${DOCKER_PASSWORD_DECODED}'
 	docker push lissenburg/shinkansen-travel-node-http:latest
 	docker logout
 .PHONY: push-image

@@ -1,8 +1,5 @@
 language: generic
 
-matrix:
-  fast_finish: false
-
 env:
   - DOCKER_COMPOSE_VERSION=1.23.2
 
@@ -34,10 +31,6 @@ before_install:
 jobs:
   include:
     - stage: test
-      script:
-        - make install
-        - make test
-    - stage: test-to-stop
       script:
         - make install
         - make test
