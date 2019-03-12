@@ -1,5 +1,8 @@
 language: generic
 
+matrix:
+  fast_finish: true
+
 env:
   - DOCKER_COMPOSE_VERSION=1.23.2
 
@@ -13,6 +16,7 @@ branches:
 
 stages:
   - name: test
+  - name: test-to-stop
   - name: build-deploy
     if: branch = master AND type = push
 
@@ -30,6 +34,10 @@ before_install:
 jobs:
   include:
     - stage: test
+      script:
+        - make install
+        - make test
+    - stage: test-to-stop
       script:
         - make install
         - make test

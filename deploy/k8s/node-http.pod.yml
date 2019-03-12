@@ -1,0 +1,11 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: shinkansen-travel-node-http-pod
+  labels:
+    app: shinkansen-travel
+    service: http
+spec:
+  containers:
+    - name: node-http
+      image: lissenburg/shinkansen-travel-node-http

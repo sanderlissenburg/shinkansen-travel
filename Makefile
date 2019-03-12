@@ -2,6 +2,8 @@ ifneq ("$(wildcard ./.env)","")
 	include .env
 endif
 
+docker_password = $(shell echo $(DOCKER_PASSWORD)| base64 -D)
+
 help: ## Shows this help message.
 	@echo 'usage: make [target] ...'
 	@echo
@@ -38,7 +40,8 @@ build-dev-image:
 .PHONY: build-dev-image
 
 push-image:
-	docker login -u '$(DOCKER_USER)' -p '$(DOCKER_PASSWORD)'
+
+	docker login -u '$(DOCKER_USER)' -p '${docker_password}'
 	docker push lissenburg/shinkansen-travel-node-http:latest
 	docker logout
 .PHONY: push-image
