@@ -1,7 +1,7 @@
 language: generic
 
 matrix:
-  fast_finish: true
+  fast_finish: false
 
 env:
   - DOCKER_COMPOSE_VERSION=1.23.2
