@@ -79,7 +79,7 @@ describe('Card', () => {
                     date
                 )
             ).endTrip(
-                'a-station-id-to-fail',
+                'a-station-id',
                 date
             ),
             [
