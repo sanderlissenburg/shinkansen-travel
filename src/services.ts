@@ -9,8 +9,8 @@ import {MongoClient} from "mongodb";
 import {MongodbCardStore} from "./infrastructure/store/mongodb-card-store";
 
 const params = {
-    mongodb_username: process.env.MONGO_INITDB_ROOT_USERNAME || 'root',
-    mongodb_password: process.env.MONGO_INITDB_ROOT_PASSWORD || 'example'
+    mongodb_username: process.env.MONGO_INITDB_ROOT_USERNAME,
+    mongodb_password: process.env.MONGO_INITDB_ROOT_PASSWORD
 };
 
 let inMemmoryCardStore: InMemmoryCardStore;
@@ -102,6 +102,8 @@ export async function createMongoClient(): Promise<MongoClient> {
     if (mongoClient) {
         return mongoClient;
     }
+
+    console.log(`mongodb://${params.mongodb_username}:${params.mongodb_password}@mongo:27017`);
 
     mongoClient = new MongoClient(`mongodb://${params.mongodb_username}:${params.mongodb_password}@mongo:27017`,{ useNewUrlParser: true } );
 

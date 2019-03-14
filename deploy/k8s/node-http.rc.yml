@@ -1,0 +1,19 @@
+apiVersion: v1
+kind: ReplicationController
+metadata:
+  name: shinkansen-travel-node-http-rc
+  labels:
+    app: shinkansen-travel
+    service: http
+spec:
+  replicas: 3
+  template:
+    metadata:
+      name: shinkansen-travel-node-http-pod
+      labels:
+        app: shinkansen-travel
+        service: http
+    spec:
+      containers:
+        - name: node-http
+          image: lissenburg/shinkansen-travel-node-http

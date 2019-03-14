@@ -15,12 +15,18 @@ services:
     ports:
       - "80:3000"
     command: yarn run watch
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME
+      - MONGO_INITDB_ROOT_PASSWORD
 
   nodejs-http:
     <<: *nodejs
     ports:
       - "80:3000"
     command: yarn run prod
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME
+      - MONGO_INITDB_ROOT_PASSWORD
 
   nodejs:
     <<: *nodejs
@@ -32,6 +38,8 @@ services:
       - MONGO_INITDB_ROOT_PASSWORD
     networks:
       - shinkasen
+    volumes:
+      - mongo:/data/db
 
   mongo-express:
     image: mongo-express
@@ -46,4 +54,8 @@ services:
 
 networks:
   shinkasen:
-    driver: bridge
+    name: shinkasen
+
+volumes:
+  mongo:
+    name: mongo
