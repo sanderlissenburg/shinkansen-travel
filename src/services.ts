@@ -103,23 +103,34 @@ export async function createMongoClient(): Promise<MongoClient> {
         return mongoClient;
     }
 
-    console.log(`mongodb://${params.mongodb_username}:${params.mongodb_password}@mongo:27017`);
+    const connect = () => {
+        mongoClient = new MongoClient(`mongodb://${params.mongodb_username}:${params.mongodb_password}@mongo:27017`,{ useNewUrlParser: true } );
 
-    mongoClient = new MongoClient(`mongodb://${params.mongodb_username}:${params.mongodb_password}@mongo:27017`,{ useNewUrlParser: true } );
+        return new Promise((resolve, reject) => {
+            mongoClient.connect((error, client) => {
+                if (error) {
+                    console.log('could not connected to mongo db');
+                    reject(error);
+                    return;
+                }
 
-    await new Promise((resolve, reject) => {
-        mongoClient.connect((error, client) => {
-            if (error) {
-                console.log(error);
-                reject();
-                return;
-            }
-
-            console.log('connected');
-            resolve();
+                console.log('connected to mongo db');
+                resolve();
+            });
         });
-    });
+    };
+
+    //@todo move to seperate file/functions
+    const pause = (duration) => new Promise(res => setTimeout(res, duration));
+
+    const backoff = (retries, fn, delay) =>
+        fn().catch(err => retries > 1
+            ? pause(delay).then(() => backoff(retries - 1, fn, delay * 2))
+            : Promise.reject(err));
+
+    await backoff(5, connect, 1000);
 
     return mongoClient;
 }
+
 

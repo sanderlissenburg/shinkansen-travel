@@ -18,7 +18,11 @@ const main = async () => {
     const port: number = 3000;
     const app = express();
 
-    await createMongoClient();
+    await createMongoClient().catch((reason) => {
+        console.log('Even after retries no connection with mongodb was possible');
+        console.log(reason);
+        process.exit(1);
+    });
 
     const commandBus = createCommandBus();
     const domainEventBus = createDomainEventBus();

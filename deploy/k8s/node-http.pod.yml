@@ -9,3 +9,6 @@ spec:
   containers:
     - name: node-http
       image: lissenburg/shinkansen-travel-node-http
+      envFrom:
+        - secretRef:
+            name: shinkasen-travel-mongodb-secret
