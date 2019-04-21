@@ -9,8 +9,10 @@ import {MongoClient} from "mongodb";
 import {MongodbCardStore} from "./infrastructure/store/mongodb-card-store";
 
 const params = {
-    mongodb_username: process.env.MONGO_INITDB_ROOT_USERNAME,
-    mongodb_password: process.env.MONGO_INITDB_ROOT_PASSWORD
+    mongodb_username: process.env.MONGODB_USER,
+    mongodb_password: process.env.MONGODB_PASSWORD,
+    mongodb_host: process.env.MONGODB_HOST,
+    mongodb_port: process.env.MONGODB_PORT,
 };
 
 let inMemmoryCardStore: InMemmoryCardStore;
@@ -104,12 +106,13 @@ export async function createMongoClient(): Promise<MongoClient> {
     }
 
     const connect = () => {
-        mongoClient = new MongoClient(`mongodb://${params.mongodb_username}:${params.mongodb_password}@mongo:27017`,{ useNewUrlParser: true } );
+        let url = `mongodb://${params.mongodb_username}:${params.mongodb_password}@${params.mongodb_host}:${params.mongodb_port}`;
+        mongoClient = new MongoClient(url,{ useNewUrlParser: true } );
 
         return new Promise((resolve, reject) => {
             mongoClient.connect((error, client) => {
                 if (error) {
-                    console.log('could not connected to mongo db');
+                    console.log('could not connected to mongo db: ' + url);
                     reject(error);
                     return;
                 }

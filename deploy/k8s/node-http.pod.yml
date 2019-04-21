@@ -9,6 +9,11 @@ spec:
   containers:
     - name: node-http
       image: lissenburg/shinkansen-travel-node-http
+      env:
+        - name: MONGODB_HOST
+          value: shinkansen-travel-mongodb-service
+        - name: MONGODB_PORT
+          value: '27017'
       envFrom:
         - secretRef:
-            name: shinkasen-travel-mongodb-secret
+            name: shinkansen-travel-mongodb-secret

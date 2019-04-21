@@ -1,0 +1,36 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: shinkansen-travel-mongodb-deployment
+  labels:
+    app: shinkansen-travel
+    service: mongodb
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: shinkansen-travel
+      service: mongodb
+  template:
+    metadata:
+      name: shinkansen-travel-mongodb-pod
+      labels:
+        app: shinkansen-travel
+        service: mongodb
+    spec:
+      containers:
+        - name: mongodb
+          image: mongo:4.0.6
+          ports:
+            - containerPort: 27017
+          env:
+            - name: MONGO_INITDB_ROOT_USERNAME
+              valueFrom:
+                secretKeyRef:
+                  name: shinkansen-travel-mongodb-secret
+                  key: MONGODB_USER
+            - name: MONGO_INITDB_ROOT_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: shinkansen-travel-mongodb-secret
+                  key: MONGODB_PASSWORD
