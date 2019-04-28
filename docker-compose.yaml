@@ -7,7 +7,7 @@ x-nodejs:
     - ./:/app
   working_dir: '/app'
   networks:
-    - shinkasen
+    - shinkasen-travel
 
 services:
   nodejs-watch:
@@ -31,6 +31,8 @@ services:
       - MONGODB_PASSWORD
       - MONGODB_HOST
       - MONGODB_PORT
+#    labels:
+#      - traefik.docker.network
 
   nodejs:
     <<: *nodejs
@@ -41,7 +43,7 @@ services:
       - MONGO_INITDB_ROOT_USERNAME=${MONGODB_USER}
       - MONGO_INITDB_ROOT_PASSWORD=${MONGODB_PASSWORD}
     networks:
-      - shinkasen
+      - shinkasen-travel
     volumes:
       - mongo:/data/db
 
@@ -54,11 +56,11 @@ services:
       - ME_CONFIG_MONGODB_ADMINUSERNAME=${MONGODB_USER}
       - ME_CONFIG_MONGODB_ADMINPASSWORD=${MONGODB_PASSWORD}
     networks:
-      - shinkasen
+      - shinkasen-travel
 
 networks:
-  shinkasen:
-    name: shinkasen
+  shinkasen-travel:
+    name: shinkasen-travel
 
 volumes:
   mongo:

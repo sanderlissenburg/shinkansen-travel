@@ -44,7 +44,7 @@ describe('Card', () => {
                 date
             ),
             [
-                new TripEndedWithoutCheckout('a-card-id-fail', date, 'new trip started at other station with station id: an-other-station-id'),
+                new TripEndedWithoutCheckout('a-card-id', date, 'new trip started at other station with station id: an-other-station-id'),
                 new TripStarted('a-card-id', 'an-other-station-id', date)
             ]
         ))
