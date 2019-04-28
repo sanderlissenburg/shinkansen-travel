@@ -9,8 +9,10 @@ import {MongoClient} from "mongodb";
 import {MongodbCardStore} from "./infrastructure/store/mongodb-card-store";
 
 const params = {
-    mongodb_username: process.env.MONGO_INITDB_ROOT_USERNAME || 'root',
-    mongodb_password: process.env.MONGO_INITDB_ROOT_PASSWORD || 'example'
+    mongodb_username: process.env.MONGODB_USER,
+    mongodb_password: process.env.MONGODB_PASSWORD,
+    mongodb_host: process.env.MONGODB_HOST,
+    mongodb_port: process.env.MONGODB_PORT,
 };
 
 let inMemmoryCardStore: InMemmoryCardStore;
@@ -103,21 +105,35 @@ export async function createMongoClient(): Promise<MongoClient> {
         return mongoClient;
     }
 
-    mongoClient = new MongoClient(`mongodb://${params.mongodb_username}:${params.mongodb_password}@mongo:27017`,{ useNewUrlParser: true } );
+    const connect = () => {
+        let url = `mongodb://${params.mongodb_username}:${params.mongodb_password}@${params.mongodb_host}:${params.mongodb_port}`;
+        mongoClient = new MongoClient(url,{ useNewUrlParser: true } );
 
-    await new Promise((resolve, reject) => {
-        mongoClient.connect((error, client) => {
-            if (error) {
-                console.log(error);
-                reject();
-                return;
-            }
+        return new Promise((resolve, reject) => {
+            mongoClient.connect((error, client) => {
+                if (error) {
+                    console.log('could not connected to mongo db: ' + url);
+                    reject(error);
+                    return;
+                }
 
-            console.log('connected');
-            resolve();
+                console.log('connected to mongo db');
+                resolve();
+            });
         });
-    });
+    };
+
+    //@todo move to seperate file/functions
+    const pause = (duration) => new Promise(res => setTimeout(res, duration));
+
+    const backoff = (retries, fn, delay) =>
+        fn().catch(err => retries > 1
+            ? pause(delay).then(() => backoff(retries - 1, fn, delay * 2))
+            : Promise.reject(err));
+
+    await backoff(5, connect, 1000);
 
     return mongoClient;
 }
+
 

@@ -2,7 +2,9 @@ import {StartTrip} from "./domain/start-trip";
 import {
     createCardEventListener,
     createCommandBus,
-    createDomainEventBus, createEndTripCommandHandler, createMongoClient,
+    createDomainEventBus,
+    createEndTripCommandHandler,
+    createMongoClient,
     createStartTripCommandHandler
 } from "./services";
 import {TripStarted} from "./domain/trip-started";
@@ -15,6 +17,12 @@ import {TripEndedWithoutCheckout} from "./domain/trip-ended-without-checkout";
 const main = async () => {
     const port: number = 3000;
     const app = express();
+
+    await createMongoClient().catch((reason) => {
+        console.log('Even after retries no connection with mongodb was possible');
+        console.log(reason);
+        process.exit(1);
+    });
 
     const commandBus = createCommandBus();
     const domainEventBus = createDomainEventBus();

@@ -1,0 +1,23 @@
+apiVersion: apps/v1
+kind: ReplicaSet
+metadata:
+  name: shinkansen-travel-node-http-rs
+  labels:
+    app: shinkansen-travel
+    service: http
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: shinkansen-travel
+      service: http
+  template:
+    metadata:
+      name: shinkansen-travel-node-http-pod
+      labels:
+        app: shinkansen-travel
+        service: http
+    spec:
+      containers:
+        - name: node-http
+          image: lissenburg/shinkansen-travel-node-http

@@ -1,21 +1,21 @@
 version: "3.7"
 
 services:
-  app:
+  node-http:
     image: lissenburg/shinkansen-travel-node-http
     ports:
       - 80:3000
     environment:
-      - MONGO_INITDB_ROOT_USERNAME
-      - MONGO_INITDB_ROOT_PASSWORD
+      - MONGODB_USER
+      - MONGODB_PASSWORD
     networks:
       - shinkasen
 
   mongo:
     image: "mongo:4.0.6"
     environment:
-      - MONGO_INITDB_ROOT_USERNAME
-      - MONGO_INITDB_ROOT_PASSWORD
+      - MONGO_INITDB_ROOT_USERNAME=${MONGODB_USER}
+      - MONGO_INITDB_ROOT_PASSWORD=${MONGODB_PASSWORD}
     networks:
       - shinkasen
 
