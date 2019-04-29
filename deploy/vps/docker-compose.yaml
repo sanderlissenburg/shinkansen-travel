@@ -8,6 +8,8 @@ services:
     environment:
       - MONGODB_USER
       - MONGODB_PASSWORD
+      - MONGODB_HOST
+      - MONGODB_PORT
     networks:
       - shinkasen
 
