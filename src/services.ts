@@ -112,12 +112,12 @@ export async function createMongoClient(): Promise<MongoClient> {
         return new Promise((resolve, reject) => {
             mongoClient.connect((error, client) => {
                 if (error) {
-                    console.log('could not connected to mongo db: ' + url);
+                    console.log('Could not connected to mongo db: ' + url);
                     reject(error);
                     return;
                 }
 
-                console.log('connected to mongo db');
+                console.log('Connected to mongo db');
                 resolve();
             });
         });

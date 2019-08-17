@@ -13,6 +13,8 @@ import {TripEnded} from "./domain/trip-ended";
 import express = require("express");
 import {TripCanceled} from "./domain/trip-canceled";
 import {TripEndedWithoutCheckout} from "./domain/trip-ended-without-checkout";
+import {CommandBus} from "./application/command/command-bus";
+import {DomainEventBus} from "./application/event/domain-event-bus";
 
 const main = async () => {
     const port: number = 3000;
@@ -24,8 +26,8 @@ const main = async () => {
         process.exit(1);
     });
 
-    const commandBus = createCommandBus();
-    const domainEventBus = createDomainEventBus();
+    const commandBus: CommandBus = createCommandBus();
+    const domainEventBus: DomainEventBus = createDomainEventBus();
 
     domainEventBus.register(TripStarted.name, await createCardEventListener());
     domainEventBus.register(TripEnded.name, await createCardEventListener());
