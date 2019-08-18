@@ -13,7 +13,6 @@ branches:
 
 stages:
   - name: test
-  - name: test-to-stop
   - name: build-deploy
     if: branch = master AND type = push
 
