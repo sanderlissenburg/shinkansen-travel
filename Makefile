@@ -13,13 +13,13 @@ install:
 .PHONY: install
 
 watch:
-	docker-compose up -d mongo mongo-express
+	docker-compose up -d proxy mongo mongo-express
 	docker-compose run --rm --service-ports nodejs-watch
 .PHONY: watch
 
 up:
 	docker-compose run --rm nodejs yarn run build
-	docker-compose up -d mongo nodejs-http
+	docker-compose up -d proxy mongo nodejs-http
 .PHONY: up
 
 down:
