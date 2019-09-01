@@ -80,7 +80,8 @@ services:
     hostname: shinkansen
     ports:
       - 8082:15672
-
+    networks:
+      - shinkansen
 
 networks:
 #  shinkansen:

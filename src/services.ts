@@ -7,12 +7,20 @@ import {CardEventListener} from "./domain/card-event-listener";
 import {EndTripCommandHandler} from "./domain/end-trip-command-handler";
 import {MongoClient} from "mongodb";
 import {MongodbCardStore} from "./infrastructure/store/mongodb-card-store";
+import {Channel, connect, Connection} from "amqplib";
+import {CardMessageProducer} from "./infrastructure/amqp/card-message-producer";
 
 const params = {
     mongodb_username: process.env.MONGODB_USER,
     mongodb_password: process.env.MONGODB_PASSWORD,
     mongodb_host: process.env.MONGODB_HOST,
     mongodb_port: process.env.MONGODB_PORT,
+    amqp:{
+        host: 'rabbitmq',
+        queue: {
+            card: 'shinkansen_travel_card'
+        }
+    }
 };
 
 let inMemmoryCardStore: InMemmoryCardStore;
@@ -98,6 +106,18 @@ export async function createCardEventListener(): Promise<CardEventListener>
     return cardEventListener = new CardEventListener(await createCardStore());
 }
 
+let cardMessageProducer: CardMessageProducer;
+export async function createCardMessageProducer(): Promise<CardMessageProducer>
+{
+    if (cardMessageProducer) {
+        return cardMessageProducer;
+    }
+
+    cardMessageProducer = new CardMessageProducer(params.amqp.queue.card, await createAmqpChannel());
+
+    return cardMessageProducer;
+}
+
 let mongoClient: MongoClient;
 export async function createMongoClient(): Promise<MongoClient> {
 
@@ -112,12 +132,12 @@ export async function createMongoClient(): Promise<MongoClient> {
         return new Promise((resolve, reject) => {
             mongoClient.connect((error, client) => {
                 if (error) {
-                    console.log('Could not connected to mongo db: ' + url);
+                    console.log('Could not connected to mongodb: ' + url);
                     reject(error);
                     return;
                 }
 
-                console.log('Connected to mongo db');
+                console.log('Connected to mongodb');
                 resolve();
             });
         });
@@ -134,6 +154,30 @@ export async function createMongoClient(): Promise<MongoClient> {
     await backoff(5, connect, 1000);
 
     return mongoClient;
+}
+
+let amqpConnection: Connection;
+export async function createAmqpConnection(): Promise<Connection> {
+    if (amqpConnection) {
+        return amqpConnection;
+    }
+
+    //@todo implement retry
+    amqpConnection = await connect(`amqp://${params.amqp.host}`);
+
+    console.log('Connected to amqp');
+
+    return amqpConnection;
+}
+
+let amqpChannel: Channel;
+export async function createAmqpChannel (): Promise<Channel>
+{
+
+    const connection: Connection = await createAmqpConnection();
+    amqpChannel = await connection.createChannel();
+
+    return amqpChannel
 }
 
 
