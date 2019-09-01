@@ -62,10 +62,10 @@ services:
       - shinkansen-travel
     labels:
       - "traefik.enable=false"
-      -
+
   #Should be moved to external repo
   proxy:
-    image: "traefik:v1.7.14"
+    image: "traefik:v1.7"
     command: --api --docker
     ports:
       - 80:80
@@ -74,6 +74,12 @@ services:
       - /var/run/docker.sock:/var/run/docker.sock
     networks:
       - shinkansen
+
+  rabbitmq:
+    image: "rabbitmq:3.7-management"
+    hostname: shinkansen
+    ports:
+      - 8082:15672
 
 
 networks:

@@ -12,19 +12,23 @@ install:
 	docker-compose run --rm nodejs yarn install
 .PHONY: install
 
-watch:
-	docker-compose up -d proxy mongo mongo-express
+watch: up-proxy
+	docker-compose up -d mongo mongo-express
 	docker-compose run --rm --service-ports nodejs-watch
 .PHONY: watch
 
-up:
+up: up-proxy
 	docker-compose run --rm nodejs yarn run build
-	docker-compose up -d proxy mongo nodejs-http
+	docker-compose up -d mongo nodejs-http
 .PHONY: up
 
 down:
 	docker-compose down
 .PHONY: down
+
+up-proxy:
+	docker-compose up -d proxy rabbitmq
+.PHONY: up-proxy
 
 test:
 	docker-compose run --rm nodejs yarn run test
