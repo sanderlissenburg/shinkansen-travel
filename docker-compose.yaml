@@ -7,32 +7,33 @@ x-nodejs:
     - ./:/app
   working_dir: '/app'
   networks:
-    - shinkasen-travel
+    - shinkansen
+    - shinkansen-travel
 
 services:
   nodejs-watch:
     <<: *nodejs
-    ports:
-      - "80:3000"
     command: yarn run watch
     environment:
       - MONGODB_USER
       - MONGODB_PASSWORD
       - MONGODB_HOST
       - MONGODB_PORT
+    labels:
+      - "traefik.frontend.rule=Host:shinkansen-travel.lissenburg.test"
+      - "traefik.port=3000"
 
   nodejs-http:
     <<: *nodejs
-    ports:
-      - "80:3000"
     command: yarn run prod
     environment:
       - MONGODB_USER
       - MONGODB_PASSWORD
       - MONGODB_HOST
       - MONGODB_PORT
-#    labels:
-#      - traefik.docker.network
+    labels:
+      - "traefik.frontend.rule=Host:shinkansen-travel.lissenburg.test"
+      - "traefik.port=3000"
 
   nodejs:
     <<: *nodejs
@@ -43,9 +44,11 @@ services:
       - MONGO_INITDB_ROOT_USERNAME=${MONGODB_USER}
       - MONGO_INITDB_ROOT_PASSWORD=${MONGODB_PASSWORD}
     networks:
-      - shinkasen-travel
+      - shinkansen-travel
     volumes:
       - mongo:/data/db
+    labels:
+      - "traefik.enable=false"
 
   mongo-express:
     image: mongo-express
@@ -56,11 +59,37 @@ services:
       - ME_CONFIG_MONGODB_ADMINUSERNAME=${MONGODB_USER}
       - ME_CONFIG_MONGODB_ADMINPASSWORD=${MONGODB_PASSWORD}
     networks:
-      - shinkasen-travel
+      - shinkansen-travel
+    labels:
+      - "traefik.enable=false"
+
+  #Should be moved to external repo
+  proxy:
+    image: "traefik:v1.7"
+    command: --api --docker
+    ports:
+      - 80:80
+      - 8080:8080
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+    networks:
+      - shinkansen
+
+  rabbitmq:
+    image: "rabbitmq:3.7-management"
+    hostname: shinkansen
+    ports:
+      - 8082:15672
+    networks:
+      - shinkansen
 
 networks:
-  shinkasen-travel:
-    name: shinkasen-travel
+#  shinkansen:
+#    external: true
+  shinkansen:
+    name: shinkansen
+  shinkansen-travel:
+    name: shinkansen-travel
 
 volumes:
   mongo:
