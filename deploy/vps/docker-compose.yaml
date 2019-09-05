@@ -3,15 +3,17 @@ version: "3.7"
 services:
   node-http:
     image: lissenburg/shinkansen-travel-node-http
-    ports:
-      - 80:3000
     environment:
       - MONGODB_USER
       - MONGODB_PASSWORD
       - MONGODB_HOST
       - MONGODB_PORT
     networks:
-      - shinkasen
+      - shinkansen
+      - shinkansen-travel
+    labels:
+      - "traefik.frontend.rule=Host:shinkansen-travel.lissenburg.nl"
+      - "traefik.port=3000"
 
   mongo:
     image: "mongo:4.0.6"
@@ -19,8 +21,33 @@ services:
       - MONGO_INITDB_ROOT_USERNAME=${MONGODB_USER}
       - MONGO_INITDB_ROOT_PASSWORD=${MONGODB_PASSWORD}
     networks:
-      - shinkasen
+      - shinkansen-travel
+    labels:
+      - "traefik.enable=false"
+
+  proxy:
+    image: "traefik:v1.7"
+    command: --api --docker
+    ports:
+      - 80:80
+      - 8080:8080
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+    networks:
+      - shinkansen
+
+  rabbitmq:
+    image: "rabbitmq:3.7-management"
+    hostname: shinkansen
+    ports:
+      - 8082:15672
+    networks:
+      - shinkansen
+    labels:
+      - "traefik.enable=false"
 
 networks:
-  shinkasen:
-    driver: bridge
+  shinkansen:
+    name: shinkansen
+  shinkansen-travel:
+    name: shinkansen-travel
