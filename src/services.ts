@@ -9,6 +9,7 @@ import {MongoClient} from "mongodb";
 import {MongodbCardStore} from "./infrastructure/store/mongodb-card-store";
 import {Channel, connect, Connection} from "amqplib";
 import {CardMessageProducer} from "./infrastructure/amqp/card-message-producer";
+import {backoff} from "./infrastructure/async/backoff";
 
 const params = {
     mongodb_username: process.env.MONGODB_USER,
@@ -120,38 +121,31 @@ export async function createCardMessageProducer(): Promise<CardMessageProducer>
 
 let mongoClient: MongoClient;
 export async function createMongoClient(): Promise<MongoClient> {
-
     if (mongoClient) {
         return mongoClient;
     }
 
-    const connect = () => {
-        let url = `mongodb://${params.mongodb_username}:${params.mongodb_password}@${params.mongodb_host}:${params.mongodb_port}`;
-        mongoClient = new MongoClient(url,{ useNewUrlParser: true } );
+    const tryToConnect = () => {
+        console.log('Trying to connect to mongodb');
+
+        const url = `mongodb://${params.mongodb_username}:${params.mongodb_password}@${params.mongodb_host}:${params.mongodb_port}`;
+        const client = new MongoClient(url,{ useNewUrlParser: true } );
 
         return new Promise((resolve, reject) => {
-            mongoClient.connect((error, client) => {
+            client.connect((error, client) => {
                 if (error) {
-                    console.log('Could not connected to mongodb: ' + url);
+                    console.log('Could not connect to mongodb');
                     reject(error);
                     return;
                 }
-
                 console.log('Connected to mongodb');
-                resolve();
+
+                resolve(client);
             });
         });
     };
 
-    //@todo move to seperate file/functions
-    const pause = (duration) => new Promise(res => setTimeout(res, duration));
-
-    const backoff = (retries, fn, delay) =>
-        fn().catch(err => retries > 1
-            ? pause(delay).then(() => backoff(retries - 1, fn, delay * 2))
-            : Promise.reject(err));
-
-    await backoff(5, connect, 1000);
+    mongoClient = await backoff(1, tryToConnect, 1000);
 
     return mongoClient;
 }
@@ -162,8 +156,12 @@ export async function createAmqpConnection(): Promise<Connection> {
         return amqpConnection;
     }
 
-    //@todo implement retry
-    amqpConnection = await connect(`amqp://${params.amqp.host}`);
+    const tryToConnect = () => {
+        console.log('Trying to connect to amqp');
+        return connect(`amqp://${params.amqp.host}`);
+    };
+
+    amqpConnection = await backoff(5, tryToConnect, 1000);
 
     console.log('Connected to amqp');
 
@@ -173,7 +171,6 @@ export async function createAmqpConnection(): Promise<Connection> {
 let amqpChannel: Channel;
 export async function createAmqpChannel (): Promise<Channel>
 {
-
     const connection: Connection = await createAmqpConnection();
     amqpChannel = await connection.createChannel();
 
