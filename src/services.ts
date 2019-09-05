@@ -145,7 +145,7 @@ export async function createMongoClient(): Promise<MongoClient> {
         });
     };
 
-    mongoClient = await backoff(1, tryToConnect, 1000);
+    mongoClient = await backoff(5, tryToConnect, 1000);
 
     return mongoClient;
 }
