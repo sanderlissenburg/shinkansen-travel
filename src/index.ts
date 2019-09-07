@@ -16,7 +16,6 @@ import {TripCanceled} from "./domain/trip-canceled";
 import {TripEndedWithoutCheckout} from "./domain/trip-ended-without-checkout";
 import {CommandBus} from "./application/command/command-bus";
 import {DomainEventBus} from "./application/event/domain-event-bus";
-import {CardMessageProducer} from "./infrastructure/amqp/card-message-producer";
 
 const main = async () => {
     const port: number = 3000;
