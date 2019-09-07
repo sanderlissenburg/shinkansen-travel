@@ -165,6 +165,10 @@ export async function createAmqpConnection(): Promise<Connection> {
 
     console.log('Connected to amqp');
 
+    amqpConnection.on('close', () => {
+        console.log('Amqp connection closed');
+    });
+
     return amqpConnection;
 }
 
