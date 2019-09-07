@@ -1,4 +1,4 @@
-import {StartTrip} from "./domain/start-trip";
+import express = require("express");
 import {
     createAmqpConnection,
     createCardEventListener, createCardMessageProducer,
@@ -8,10 +8,10 @@ import {
     createMongoClient,
     createStartTripCommandHandler
 } from "./services";
+import {StartTrip} from "./domain/start-trip";
 import {TripStarted} from "./domain/trip-started";
 import {EndTrip} from "./domain/end-trip";
 import {TripEnded} from "./domain/trip-ended";
-import express = require("express");
 import {TripCanceled} from "./domain/trip-canceled";
 import {TripEndedWithoutCheckout} from "./domain/trip-ended-without-checkout";
 import {CommandBus} from "./application/command/command-bus";

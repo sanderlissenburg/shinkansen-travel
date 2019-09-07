@@ -5,9 +5,9 @@ ENV NODE_ENV developement
 
 WORKDIR /app
 
-COPY package.json yarn.lock tsconfig.json /app/
+COPY package.json package-lock.json tsconfig.json /app/
 
-RUN yarn && yarn cache clean
+RUN npm install && npm cache clean --force
 
 COPY . /app
 
@@ -18,13 +18,13 @@ WORKDIR /app
 
 ENV NODE_ENV production
 
-COPY package.json yarn.lock tsconfig.json /app/
+COPY package.json package-lock.json tsconfig.json /app/
 
 COPY . /app
 
-RUN yarn && yarn cache clean
+RUN npm install && npm cache clean --force
 
-RUN yarn run build
+RUN npm run build
 
 # PROD STEP
 FROM node:11-alpine as prod
@@ -35,4 +35,4 @@ COPY --from=build /app/package.json /app/package.json
 COPY --from=build /app/build /app/build
 COPY --from=build /app/node_modules /app/node_modules
 
-CMD ["yarn", "run", "prod"]
+CMD ["npm", "run", "prod"]
