@@ -51,5 +51,6 @@ push-image:
 deploy:
 	ssh -i ./travis/deploy_key $(SSH_USER)@$(SSH_HOST) 'mkdir -p ~/www/shinkansen-travel/'
 	scp -r ./deploy/vps/* $(SSH_USER)@$(SSH_HOST):~/www/shinkansen-travel/
+	ssh -i ./travis/deploy_key $(SSH_USER)@$(SSH_HOST) 'touch ~/www/shinkansen-travel/acme.json'
 	ssh -i ./travis/deploy_key $(SSH_USER)@$(SSH_HOST) 'cd www/shinkansen-travel/ && docker-compose pull && docker-compose up -d'
 .PHONY: deploy

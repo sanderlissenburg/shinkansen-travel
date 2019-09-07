@@ -4,3 +4,4 @@ node_modules
 yarn-error.log
 build
 travis/deploy_key
+deploy/vps/acme.json
