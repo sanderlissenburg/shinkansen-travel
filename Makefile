@@ -18,7 +18,7 @@ watch: up-proxy
 .PHONY: watch
 
 up: up-proxy
-#	docker-compose run --rm nodejs yarn run build
+	docker-compose run --rm nodejs yarn run build
 	docker-compose up -d mongo nodejs-http
 .PHONY: up
 
