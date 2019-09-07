@@ -76,7 +76,7 @@ const main = async () => {
     });
 
     app.get('/foobar', (req, res) => {
-       res.send('foobar to you');
+       res.send('He foobar');
     });
 
     app.listen(port, () => {
