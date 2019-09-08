@@ -1,5 +1,9 @@
 {
   "name": "shinkansen-travel",
+  "repository": {
+    "type": "github",
+    "url": "https://github.com/sanderlissenburg/shinkansen-travel"
+  },
   "version": "0.0.1",
   "description": "A check in and out simulation",
   "main": "src/index.ts",
@@ -19,6 +23,7 @@
     "amqplib": "^0.5.5",
     "cerialize": "^0.1.18",
     "express": "^4.16.4",
+    "express-validator": "^6.2.0",
     "luxon": "^1.11.2",
     "mongodb": "^3.1.13",
     "typescript": "^3.3.3333"
