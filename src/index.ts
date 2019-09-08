@@ -1,4 +1,5 @@
 import express = require("express");
+import {param, validationResult} from "express-validator";
 import {
     createAmqpConnection,
     createCardEventListener, createCardMessageProducer,
@@ -51,7 +52,16 @@ const main = async () => {
     commandBus.register(StartTrip.name, await createStartTripCommandHandler());
     commandBus.register(EndTrip.name, await createEndTripCommandHandler());
 
-    app.get('/start-trip/:cardId/:stationId/', async (req, res) => {
+    const validation = [
+        param('cardId', 'must be an uuid v5').isUUID(5),
+        param('stationId', 'must be an uuid v5').isUUID(5),
+    ];
+
+    app.get('/start-trip/:cardId/:stationId/', validation, async (req, res) => {
+        const errors = validationResult(req);
+        if (!errors.isEmpty()) {
+            return res.status(422).json({errors: errors.array()});
+        }
 
         try {
             await commandBus.handle(new StartTrip(req.params.cardId, req.params.stationId));
@@ -63,8 +73,11 @@ const main = async () => {
         res.send(`Trip started for ${req.params.cardId} at station ${req.params.stationId}`);
     });
 
-    app.get('/end-trip/:cardId/:stationId/', async (req, res) => {
-
+    app.get('/end-trip/:cardId/:stationId/', validation, async (req, res) => {
+        const errors = validationResult(req);
+        if (!errors.isEmpty()) {
+            return res.status(422).json({errors: errors.array()});
+        }
         try {
             await commandBus.handle(new EndTrip(req.params.cardId, req.params.stationId));
         } catch (e) {
