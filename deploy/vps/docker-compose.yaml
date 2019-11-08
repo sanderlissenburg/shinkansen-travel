@@ -32,6 +32,7 @@ services:
       placement:
         constraints: [node.role == manager]
 
+
   proxy:
     image: "traefik:v1.7"
     command: --api
