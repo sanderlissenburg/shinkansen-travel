@@ -134,7 +134,7 @@ export async function createMongoClient(): Promise<MongoClient> {
         return new Promise((resolve, reject) => {
             client.connect((error, client) => {
                 if (error) {
-                    console.log('Could not connect to mongodb');
+                    console.log(`Could not connect to mongodb with ${url}`);
                     reject(error);
                     return;
                 }
