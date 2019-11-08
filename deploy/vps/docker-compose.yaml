@@ -22,8 +22,8 @@ services:
   mongo:
     image: "mongo:4.0.6"
     environment:
-      - MONGO_INITDB_ROOT_USERNAME
-      - MONGO_INITDB_ROOT_PASSWORD
+      - MONGO_INITDB_ROOT_USERNAME=${MONGODB_USER}
+      - MONGO_INITDB_ROOT_PASSWORD=${MONGODB_PASSWORD}
     networks:
       - shinkansen-travel
     labels:
