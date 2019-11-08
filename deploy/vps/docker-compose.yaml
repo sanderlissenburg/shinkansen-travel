@@ -14,6 +14,9 @@ services:
     labels:
       - "traefik.frontend.rule=Host:shinkansen-travel.lissenburg.nl"
       - "traefik.port=3000"
+    deploy:
+      mode: replicated
+      replicas: 2
 
   mongo:
     image: "mongo:4.0.6"
@@ -24,6 +27,9 @@ services:
       - shinkansen-travel
     labels:
       - "traefik.enable=false"
+    deploy:
+      placement:
+        constraints: [node.role == manager]
 
   proxy:
     image: "traefik:v1.7"
@@ -38,6 +44,9 @@ services:
       - ./acme.json:/acme.json
     networks:
       - shinkansen
+    deploy:
+      placement:
+        constraints: [node.role == manager]
 
   rabbitmq:
     image: "rabbitmq:3.7-management"
@@ -48,6 +57,9 @@ services:
       - shinkansen
     labels:
       - "traefik.enable=false"
+    deploy:
+      placement:
+        constraints: [node.role == manager]
 
 networks:
   shinkansen:
