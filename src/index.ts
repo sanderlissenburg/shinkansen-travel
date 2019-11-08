@@ -17,6 +17,7 @@ import {TripCanceled} from "./domain/trip-canceled";
 import {TripEndedWithoutCheckout} from "./domain/trip-ended-without-checkout";
 import {CommandBus} from "./application/command/command-bus";
 import {DomainEventBus} from "./application/event/domain-event-bus";
+import {Request, Response} from "express";
 
 const main = async () => {
     const port: number = 3000;
@@ -53,11 +54,11 @@ const main = async () => {
     commandBus.register(EndTrip.name, await createEndTripCommandHandler());
 
     const validation = [
-        param('cardId', 'must be an uuid v5').isUUID(5),
-        param('stationId', 'must be an uuid v5').isUUID(5),
+        param('cardId', 'must be an uuid v5').isUUID(4),
+        param('stationId', 'must be an uuid v5').isUUID(4),
     ];
 
-    app.get('/start-trip/:cardId/:stationId/', validation, async (req, res) => {
+    app.put('/start-trip/:cardId/:stationId/', validation, async (req: Request, res: Response) => {
         const errors = validationResult(req);
         if (!errors.isEmpty()) {
             return res.status(422).json({errors: errors.array()});
@@ -66,14 +67,18 @@ const main = async () => {
         try {
             await commandBus.handle(new StartTrip(req.params.cardId, req.params.stationId));
         } catch (e) {
-            res.status(409).send(e.message);
+            res.status(409).json({
+                msg: e.message
+            });
             return;
         }
 
-        res.send(`Trip started for ${req.params.cardId} at station ${req.params.stationId}`);
+        res.json({
+            msg: `Trip started for ${req.params.cardId} at station ${req.params.stationId}`
+        });
     });
 
-    app.get('/end-trip/:cardId/:stationId/', validation, async (req, res) => {
+    app.put('/end-trip/:cardId/:stationId/', validation, async (req: Request, res: Response) => {
         const errors = validationResult(req);
         if (!errors.isEmpty()) {
             return res.status(422).json({errors: errors.array()});
@@ -81,14 +86,18 @@ const main = async () => {
         try {
             await commandBus.handle(new EndTrip(req.params.cardId, req.params.stationId));
         } catch (e) {
-            res.status(409).send(e.message);
+            res.status(409).json({
+                msg: e.message
+            });
             return;
         }
 
-        res.send(`Trip ended for ${req.params.cardId} at station ${req.params.stationId}`);
+        res.json( {
+            msg: `Trip ended for ${req.params.cardId} at station ${req.params.stationId}`
+        });
     });
 
-    app.get('/foobar', (req, res) => {
+    app.get('/foobar', (req: Request, res: Response) => {
        res.send('He foobar');
     });
 

@@ -19,7 +19,7 @@ watch: up-proxy
 
 up: up-proxy
 	docker-compose run --rm nodejs npm run build
-	docker-compose up -d mongo nodejs-http
+	docker-compose up -d mongo mongo-express nodejs-http
 .PHONY: up
 
 down:
