@@ -11,18 +11,19 @@ services:
     networks:
       - shinkansen
       - shinkansen-travel
-    labels:
-      - "traefik.frontend.rule=Host:shinkansen-travel.lissenburg.nl"
-      - "traefik.port=3000"
     deploy:
       mode: replicated
-      replicas: 2
+      replicas: 3
+      labels:
+        - "traefik.enable=true"
+        - "traefik.port=3000"
+        - "traefik.frontend.rule=Host:shinkansen-travel.lissenburg.nl"
 
   mongo:
     image: "mongo:4.0.6"
     environment:
-      - MONGO_INITDB_ROOT_USERNAME=${MONGODB_USER}
-      - MONGO_INITDB_ROOT_PASSWORD=${MONGODB_PASSWORD}
+      - MONGO_INITDB_ROOT_USERNAME
+      - MONGO_INITDB_ROOT_PASSWORD
     networks:
       - shinkansen-travel
     labels:
@@ -33,7 +34,7 @@ services:
 
   proxy:
     image: "traefik:v1.7"
-    command: --api --docker
+    command: --api
     ports:
       - 80:80
       - 443:443

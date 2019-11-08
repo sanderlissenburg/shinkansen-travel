@@ -18,6 +18,7 @@ import {TripEndedWithoutCheckout} from "./domain/trip-ended-without-checkout";
 import {CommandBus} from "./application/command/command-bus";
 import {DomainEventBus} from "./application/event/domain-event-bus";
 import {Request, Response} from "express";
+import * as getContainerId from "docker-container-id";
 
 const main = async () => {
     const port: number = 3000;
@@ -99,6 +100,10 @@ const main = async () => {
 
     app.get('/foobar', (req: Request, res: Response) => {
        res.send('He foobar');
+    });
+
+    app.get('/docker-container-id', async (req: Request, res: Response) => {
+        res.send(`Container with ID: ${await getContainerId()} responded`);
     });
 
     app.listen(port, () => {
