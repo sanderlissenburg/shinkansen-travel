@@ -32,7 +32,7 @@ const main = async () => {
 
     await createAmqpConnection().catch((reason) => {
         console.log('Even after retries no connection with rabbitmq was possible');
-        console.log(reason)
+        console.log(reason);
         process.exit(1);
     });
 
@@ -99,7 +99,7 @@ const main = async () => {
     });
 
     app.get('/foobar', (req: Request, res: Response) => {
-       res.send('He foobar');
+       res.send('Hé Bitfactory!');
     });
 
     app.get('/docker-container-id', async (req: Request, res: Response) => {
@@ -112,4 +112,3 @@ const main = async () => {
 };
 
 main();
-

@@ -1,5 +1,8 @@
+debug = true
+logLevel = "DEBUG"
+
 defaultEntryPoints = ["http", "https"]
-swarmmode=true
+
 [entryPoints]
   [entryPoints.http]
     address = ":80"
@@ -9,7 +12,6 @@ swarmmode=true
     address = ":443"
       [entryPoints.https.tls]
 
-
 [acme]
 email = "sanderlissenburg@gmail.com"
 storage = "acme.json"
@@ -17,3 +19,6 @@ entryPoint = "https"
 onHostRule = true
   [acme.httpChallenge]
   entryPoint = "http"
+
+[Docker]
+swarmmode=true

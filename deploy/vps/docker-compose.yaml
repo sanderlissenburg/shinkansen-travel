@@ -13,7 +13,7 @@ services:
       - shinkansen-travel
     deploy:
       mode: replicated
-      replicas: 3
+      replicas: 2
       labels:
         - "traefik.enable=true"
         - "traefik.port=3000"
@@ -31,6 +31,7 @@ services:
     deploy:
       placement:
         constraints: [node.role == manager]
+
 
   proxy:
     image: "traefik:v1.7"
